@@ -143,11 +143,11 @@ class VOCEvaluator:
 
             dt_data=self.convert_to_voc_format(outputs, info_imgs, ids)
             data_list.update(dt_data)
-            print(dt_data)
+            # print(dt_data)
 
             
 
-            for _id,out in image_wise_data.items():
+            for _id,out in dt_data.items():
                 seen += 1
                 # gtAnn=self.dataloader.dataset.coco.imgToAnns[int(_id)]
                 # print(gtAnn)
@@ -155,7 +155,7 @@ class VOCEvaluator:
 
                 tcls=gtAnn[:,4]
                 # print(gtAnn,tcls)
-                if out==None: 
+                if out[0]==None: 
                     if len(gtAnn)>0:
                         stats.append((torch.zeros(0, niou, dtype=torch.bool), torch.Tensor(), torch.Tensor(), tcls))
                     continue
@@ -167,28 +167,19 @@ class VOCEvaluator:
                     # dt[:,5]=dt[:,6]
                     # dt=torch.from_numpy(np.delete(dt,-1,axis=1))#share mem
                     
-                    dt=np.concatenate((out["bboxes"],np.array(out["scores"], ndmin=2).T,np.array(out["categories"], ndmin=2).T),axis=1)
-                    dt=torch.from_numpy(dt)
+                    dt = torch.cat((out[0], out[2].unsqueeze(1), out[1].unsqueeze(1)), dim=1)
                     gt=np.concatenate((gtAnn[:,4].reshape(-1,1),gtAnn[:,:4]),axis=1)
                     gt=torch.from_numpy(gt)
 
                     # gt_ids:[0,80],dt在convert_to_coco_format中映射到了[1,90],此处转换回[0,80](相当于多算一步，为了减少对源文件的改动)
                     if max(cat_ids)>self.num_classes:
+                        # print(1)
                         dt[:,5].map_(dt[:,5],lambda d,*y:cat_ids.index(d))
 
                     # print(_id,dt,gt)
                     confusion_matrix.process_batch(dt, gt)
                     correct = process_batch(dt, gt, iouv)
                 stats.append((correct, dt[:, 4], dt[:, 5], tcls))
-
-        statistics = torch.cuda.FloatTensor([inference_time, nms_time, n_samples])
-        if distributed:
-            data_list = gather(data_list, dst=0)
-            data_list = ChainMap(*data_list)
-            torch.distributed.reduce(statistics, dst=0)
-
-        eval_results = self.evaluate_prediction(data_list, statistics)
-        synchronize()
 
         stats = [np.concatenate(x, 0) for x in zip(*stats)]
         tp, fp, p, r, f1, ap, ap_class =ap_per_class(*stats, plot=True, save_dir=save_dir, names=names_dic,sample_rate=self.plot_sample_rate)
@@ -201,6 +192,15 @@ class VOCEvaluator:
         for i, c in enumerate(ap_class):
             s+=pf % (names[c],seen, nt[c], p[i], r[i], ap50[i], ap[i])
         logger.info(s)      # log出P，R，mAP50，mAP95
+
+        statistics = torch.cuda.FloatTensor([inference_time, nms_time, n_samples])
+        if distributed:
+            data_list = gather(data_list, dst=0)
+            data_list = ChainMap(*data_list)
+            torch.distributed.reduce(statistics, dst=0)
+
+        eval_results = self.evaluate_prediction(data_list, statistics)
+        synchronize()
 
         if return_outputs:
             return eval_results, data_list

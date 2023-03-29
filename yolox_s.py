@@ -49,6 +49,13 @@ class Exp(MyExp):
 
 
 
-if __name__=="__main__":
-    print(f"{os.path.split(os.path.realpath(__file__))[1].split('.')[0]}_"+\
-            str(datetime.today()).replace(" ","-").split(".")[0].replace(":","-"))
+# if __name__=="__main__":
+#     print(f"{os.path.split(os.path.realpath(__file__))[1].split('.')[0]}_"+\
+#             str(datetime.today()).replace(" ","-").split(".")[0].replace(":","-"))
+    # import torch
+
+    # tensor_3x4 = torch.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+    # vector_1 = torch.tensor([13, 14, 15])
+    # vector_2 = torch.tensor([16, 17, 18])
+    # tensor_3x6 = torch.cat((tensor_3x4, vector_1.unsqueeze(1), vector_2.unsqueeze(1)), dim=1)
+    # print(tensor_3x6)

@@ -1,5 +1,5 @@
 import re
-import numpy as np
+# import numpy as np
 import pandas as pd
 
 fpath=r"path/to/log.txt"

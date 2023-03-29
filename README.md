@@ -1,10 +1,10 @@
-# visualize evaluation for origin YOLOX
+# visualize evaluation for YOLOX
 
 [原readme](README_origin.md)
 
 知乎|bilibili
 
-画混淆矩阵，各种曲线
+画混淆矩阵，各种曲线，支持coco和voc数据集
 
 <img src="http://m.qpic.cn/psc?/V53B8TyR2Noekm3rNUZH48QLmk39wAow/ruAMsa53pVQWN7FLK88i5j8Il3SvYwJAF.zgHrRw4riV2JHSNEQWoLdRQKdrgjBSnbjW8WF3y.WBcHxpMBgdsnypSW1FFgWCAKm7R5gUx8M!/b&bo=oAU4BAAAAAADB7s" alt="confusion_matrix" style="zoom: 25%;" />
 

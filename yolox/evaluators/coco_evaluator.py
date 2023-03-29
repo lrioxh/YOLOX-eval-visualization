@@ -275,7 +275,17 @@ class COCOEvaluator:
                     correct = process_batch(dt, gt, iouv)
                 stats.append((correct, dt[:, 4], dt[:, 5], tcls))
 
-            
+        stats = [np.concatenate(x, 0) for x in zip(*stats)]
+        tp, fp, p, r, f1, ap, ap_class =ap_per_class(*stats, plot=True, save_dir=save_dir, names=names_dic,sample_rate=self.plot_sample_rate)
+        confusion_matrix.plot(save_dir=save_dir, names=names)
+        ap50, ap = ap[:, 0], ap.mean(1)  # AP@0.5, AP@0.5:0.95
+        mp, mr, map50, map = p.mean(), r.mean(), ap50.mean(), ap.mean()
+        nt = np.bincount(stats[3].astype(np.int64), minlength=self.num_classes)
+        pf = '\n%20s' + '%11i'  *2 + '%11.3g' * 4  # print format
+        s+=pf % ('all',seen, nt.sum(), mp, mr, map50, map)
+        for i, c in enumerate(ap_class):
+            s+=pf % (names[c],seen, nt[c], p[i], r[i], ap50[i], ap[i])
+        logger.info(s)      # log出P，R，mAP50，mAP95
 
         statistics = torch.cuda.FloatTensor([inference_time, nms_time, n_samples])
         if distributed:
@@ -290,18 +300,6 @@ class COCOEvaluator:
 
         eval_results = self.evaluate_prediction(data_list, statistics)
         synchronize()
-
-        stats = [np.concatenate(x, 0) for x in zip(*stats)]
-        tp, fp, p, r, f1, ap, ap_class =ap_per_class(*stats, plot=True, save_dir=save_dir, names=names_dic,sample_rate=self.plot_sample_rate)
-        confusion_matrix.plot(save_dir=save_dir, names=names)
-        ap50, ap = ap[:, 0], ap.mean(1)  # AP@0.5, AP@0.5:0.95
-        mp, mr, map50, map = p.mean(), r.mean(), ap50.mean(), ap.mean()
-        nt = np.bincount(stats[3].astype(np.int64), minlength=self.num_classes)
-        pf = '\n%20s' + '%11i'  *2 + '%11.3g' * 4  # print format
-        s+=pf % ('all',seen, nt.sum(), mp, mr, map50, map)
-        for i, c in enumerate(ap_class):
-            s+=pf % (names[c],seen, nt[c], p[i], r[i], ap50[i], ap[i])
-        logger.info(s)      # log出P，R，mAP50，mAP95
         
         if return_outputs:
             return eval_results, output_data
