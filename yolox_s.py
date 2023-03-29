@@ -16,26 +16,25 @@ class Exp(MyExp):
 
         # Define yourself dataset path
         self.data_dir = "datasets/coco"
-        # self.data_dir = "/home/mist/set3coco"
-        # self.train_ann = "instances_train2017.json"
-        # self.val_ann = "instances_val2017.json"
         self.test_ann = "instances_val2017.json"
+        self.train_ann = "instances_val2017.json"
+        self.val_ann = "instances_val2017.json"
 
         self.num_classes = 80
 
-        self.warmup_epochs = 5
-        self.no_aug_epochs = 15
+        self.warmup_epochs = 1
+        self.no_aug_epochs = 1
         self.basic_lr_per_img = 0.001 / 16
 
-        self.max_epoch = 300
+        self.max_epoch = 5
         self.data_num_workers = 4
         self.multiscale_range = 5
         # log period in iter, for example,
         # if set to 1, user could see log every iteration.
-        self.print_interval = 20
+        self.print_interval = 2
         # eval period in epoch, for example,
         # if set to 1, model will be evaluate after every epoch.
-        self.eval_interval = 20
+        self.eval_interval = 2
         # save history checkpoint or not.
         # If set to False, yolox will only save latest and best ckpt.
         self.save_history_ckpt = False

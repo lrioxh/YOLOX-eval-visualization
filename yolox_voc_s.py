@@ -1,5 +1,6 @@
 # encoding: utf-8
 import os
+from datetime import datetime
 
 from yolox.data import get_yolox_datadir
 from yolox.exp import Exp as MyExp
@@ -19,7 +20,11 @@ class Exp(MyExp):
         self.hsv_prob = 1.0
         self.flip_prob = 0.5
 
-        self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
+        # draw curve
+        self.plot_sample_rate = 3000    # 默认1000
+        
+        self.exp_name = f"{os.path.split(os.path.realpath(__file__))[1].split('.')[0]}_"+\
+            str(datetime.today()).replace(" ","-").split(".")[0].replace(":","-")
 
     def get_dataset(self, cache: bool, cache_type: str = "ram"):
         from yolox.data import VOCDetection, TrainTransform
@@ -57,4 +62,7 @@ class Exp(MyExp):
             confthre=self.test_conf,
             nmsthre=self.nmsthre,
             num_classes=self.num_classes,
+            exp_name=self.exp_name,
+            plot_sample_rate=self.plot_sample_rate if self.plot_sample_rate else 1000
+
         )
