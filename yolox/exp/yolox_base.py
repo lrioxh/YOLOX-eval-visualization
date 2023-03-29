@@ -341,6 +341,8 @@ class Exp(BaseExp):
             nmsthre=self.nmsthre,
             num_classes=self.num_classes,
             testdev=testdev,
+            exp_name=self.exp_name,
+            plot_sample_rate=self.plot_sample_rate if self.plot_sample_rate else 1000
         )
 
     def get_trainer(self, args):
