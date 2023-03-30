@@ -263,7 +263,7 @@ class COCOEvaluator:
                     
                     dt=np.concatenate((out["bboxes"],np.array(out["scores"], ndmin=2).T,np.array(out["categories"], ndmin=2).T),axis=1)
                     dt=torch.from_numpy(dt)
-                    gt=np.concatenate((gtAnn[:,4].reshape(-1,1),gtAnn[:,:4]),axis=1)
+                    gt=np.concatenate((tcls.reshape(-1,1),gtAnn[:,:4]),axis=1)
                     gt=torch.from_numpy(gt)
 
                     # gt_ids:[0,80],dt在convert_to_coco_format中映射到了[1,90],此处转换回[0,80](相当于多算一步，为了减少对源文件的改动)

@@ -168,7 +168,7 @@ class VOCEvaluator:
                     # dt=torch.from_numpy(np.delete(dt,-1,axis=1))#share mem
                     
                     dt = torch.cat((out[0], out[2].unsqueeze(1), out[1].unsqueeze(1)), dim=1)
-                    gt=np.concatenate((gtAnn[:,4].reshape(-1,1),gtAnn[:,:4]),axis=1)
+                    gt=np.concatenate((tcls.reshape(-1,1),gtAnn[:,:4]),axis=1)
                     gt=torch.from_numpy(gt)
 
                     # gt_ids:[0,80],dt在convert_to_coco_format中映射到了[1,90],此处转换回[0,80](相当于多算一步，为了减少对源文件的改动)
