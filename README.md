@@ -2,7 +2,9 @@
 
 [原readme](README_origin.md) fork自2023.03.30
 
-[知乎](https://zhuanlan.zhihu.com/p/499759736)|[bilibili](https://www.bilibili.com/read/cv16169153)
+相关链接：[知乎](https://zhuanlan.zhihu.com/p/499759736) | [bilibili](https://www.bilibili.com/read/cv16169153)
+
+有问题提issue
 
 ## 1
 
